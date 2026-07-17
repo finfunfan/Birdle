@@ -94,7 +94,10 @@
   @keyframes drop{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
   .spec-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;
     padding:10px 14px;border-bottom:1px dashed var(--line)}
-  .spec-name{font-family:'Fraunces',serif;font-style:italic;font-weight:600;font-size:18px}
+  .spec-title{display:flex;flex-direction:column;line-height:1.15}
+  .spec-name{font-family:'Fraunces',serif;font-weight:600;font-size:18px}
+  .spec-name.sci-only{font-style:italic}
+  .spec-sci{font-family:'Fraunces',serif;font-style:italic;font-size:12px;color:var(--ink-soft);font-weight:400}
   .spec-no{font-family:'Space Mono',monospace;font-size:11px;color:var(--ink-soft)}
   .chips{display:flex;flex-wrap:wrap;gap:6px;padding:10px 14px 6px}
   .chip{
@@ -172,7 +175,7 @@
 
   <div class="search">
     <input id="guess" type="text" autocomplete="off" spellcheck="false"
-      placeholder="Name a bird species…  (e.g. Turdus merula)" aria-label="Guess a bird species">
+      placeholder="Name a bird…  (e.g. American Robin or Turdus migratorius)" aria-label="Guess a bird species">
     <div class="ac" id="ac" role="listbox"></div>
   </div>
   <div class="guesscount">
@@ -207,13 +210,15 @@
   // hydrate birds into objects
   const CAT = ["family","order","habitat","migration","niche","lifestyle"];
   const birds = D.birds.map(r=>{
-    const o={name:r[ix.name]};
+    const o={name:r[ix.name], common:(r[ix.common]||null)};
     CAT.forEach(c=>{const id=r[ix[c]]; o[c]= id<0?null:LU[c][id];});
     ["mass","wing","beak","tarsus","tail","hwi"].forEach(k=>o[k]=r[ix[k]]);
     o.pool = r[ix.pool]===1;
+    o.label = o.common || o.name;   // what the player sees first
     return o;
   });
-  const byName = {}; birds.forEach(b=>byName[b.name.toLowerCase()]=b);
+  const byName = {};
+  birds.forEach(b=>{ byName[b.name.toLowerCase()]=b; if(b.common) byName[b.common.toLowerCase()]=b; });
   const pool = birds.filter(b=>b.pool);
 
   // ---- deterministic daily target ----
@@ -296,9 +301,12 @@
         <div class="tv">${fmt(g[t.k])}<span class="arw">${r.arw}</span></div>
         <div class="unit">${t.unit||"index"}</div></div>`;
     });
+    const nameHtml = g.common
+      ? `<span class="spec-name">${g.common}</span><span class="spec-sci">${g.name}</span>`
+      : `<span class="spec-name sci-only">${g.name}</span>`;
     el.innerHTML=`
       <div class="spec-head">
-        <span class="spec-name">${g.name}</span>
+        <div class="spec-title">${nameHtml}</div>
         <span class="spec-no">${g.family}</span>
       </div>
       <div class="chips">${chips}</div>
@@ -333,8 +341,9 @@
     state.done=true; input.disabled=true; ac.classList.remove("open");
     banner.classList.add("show");
     const t=TARGET;
+    const rev = t.common ? `${t.common} <span class="sci">(${t.name})</span>` : `<span class="sci">${t.name}</span>`;
     banner.innerHTML=`
-      <h2>${state.won?"Nailed it — ":"The mystery bird was "}<span class="sci">${t.name}</span></h2>
+      <h2>${state.won?"Nailed it — ":"The mystery bird was "}${rev}</h2>
       <p>${t.family} · ${t.order} · ${t.habitat||"—"} · ${t.niche||"—"} · ${t.mass!=null?t.mass+" g":""}</p>
       <div class="row">
         <button class="act" id="shareBtn">Share result</button>
@@ -371,16 +380,19 @@
     if(q.length<2){ ac.classList.remove("open"); return; }
     const starts=[], contains=[];
     for(const b of birds){
-      const n=b.name.toLowerCase();
-      if(n.startsWith(q)) starts.push(b);
-      else if(n.includes(q)) contains.push(b);
-      if(starts.length>=8) break;
+      const sci=b.name.toLowerCase(), com=(b.common||"").toLowerCase();
+      if(sci.startsWith(q)||com.startsWith(q)) starts.push(b);
+      else if(sci.includes(q)||com.includes(q)) contains.push(b);
+      if(starts.length>=12) break;
     }
     acItems=starts.concat(contains).slice(0,8);
     acActive=-1;
     if(!acItems.length){ ac.classList.remove("open"); return; }
-    ac.innerHTML=acItems.map((b,i)=>
-      `<div class="ac-item" data-i="${i}"><span class="sci">${b.name}</span><span class="fam">${b.family}</span></div>`).join("");
+    ac.innerHTML=acItems.map((b,i)=>{
+      const main = b.common ? b.common : `<span class="sci">${b.name}</span>`;
+      const sub  = b.common ? `<span class="fam"><i>${b.name}</i> · ${b.family}</span>` : `<span class="fam">${b.family}</span>`;
+      return `<div class="ac-item" data-i="${i}"><span>${main}</span>${sub}</div>`;
+    }).join("");
     ac.classList.add("open");
     [...ac.children].forEach(c=>c.onclick=()=>submit(acItems[+c.dataset.i].name));
   });
