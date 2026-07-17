@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Birdle — guess the mystery bird</title>
+<meta name="description" content="A daily bird-guessing game built on the AVONET morphological database. Deduce the mystery species from its taxonomy, ecology and measurements.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#e5e1d1;          /* aged manila drawer */
+    --card:#f4f1e6;           /* specimen tag */
+    --ink:#23302a;            /* pine ink */
+    --ink-soft:#5c6159;
+    --line:#c9c3ad;           /* faint rule */
+    --accent:#2f6b52;         /* label green */
+    --band:#bd4530;           /* ringing-band red, used sparingly */
+    --match:#4a7a43;          /* correct */
+    --near:#c68a2b;           /* close */
+    --miss:#8f897c;           /* far */
+    --tile-text:#f6f3ea;
+    --radius:3px;
+    --shadow:0 1px 0 rgba(0,0,0,.06), 0 6px 18px rgba(35,48,42,.10);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:var(--paper);
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(255,255,255,.35), transparent 40%),
+      repeating-linear-gradient(0deg, transparent, transparent 27px, rgba(35,48,42,.035) 28px);
+    color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;
+    line-height:1.45;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:20px 16px 80px}
+
+  /* ---- header ---- */
+  header{border-bottom:2px solid var(--ink);padding-bottom:14px;margin-bottom:18px}
+  .brand{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  h1{
+    font-family:'Fraunces',serif;font-weight:900;font-size:clamp(38px,9vw,64px);
+    letter-spacing:-.02em;margin:0;line-height:.9;
+  }
+  h1 .dot{color:var(--band)}
+  .eyebrow{
+    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.22em;
+    text-transform:uppercase;color:var(--ink-soft);
+  }
+  .meta{font-family:'Space Mono',monospace;font-size:12px;color:var(--ink-soft);text-align:right}
+  .meta b{color:var(--ink)}
+  .tagline{font-size:14px;color:var(--ink-soft);margin-top:6px}
+  .tagline a{color:var(--accent);text-decoration:none;border-bottom:1px solid var(--line)}
+
+  /* ---- input ---- */
+  .search{position:relative;margin:18px 0 8px}
+  #guess{
+    width:100%;padding:14px 16px;font-size:16px;font-family:'Inter',sans-serif;
+    background:var(--card);border:1.5px solid var(--ink);border-radius:var(--radius);
+    color:var(--ink);box-shadow:var(--shadow);
+  }
+  #guess::placeholder{color:#9a9585;font-style:italic}
+  #guess:focus{outline:3px solid rgba(47,107,82,.35);outline-offset:1px}
+  #guess:disabled{opacity:.5}
+  .ac{
+    position:absolute;z-index:20;left:0;right:0;top:calc(100% + 4px);
+    background:var(--card);border:1.5px solid var(--ink);border-radius:var(--radius);
+    box-shadow:var(--shadow);max-height:300px;overflow:auto;display:none;
+  }
+  .ac.open{display:block}
+  .ac-item{padding:9px 14px;cursor:pointer;display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid var(--line)}
+  .ac-item:last-child{border-bottom:0}
+  .ac-item .sci{font-style:italic}
+  .ac-item .fam{font-family:'Space Mono',monospace;font-size:11px;color:var(--ink-soft);white-space:nowrap;align-self:center}
+  .ac-item.active,.ac-item:hover{background:var(--accent);color:var(--tile-text)}
+  .ac-item.active .fam,.ac-item:hover .fam{color:rgba(246,243,234,.75)}
+
+  .guesscount{font-family:'Space Mono',monospace;font-size:12px;color:var(--ink-soft);margin:2px 2px 16px;display:flex;justify-content:space-between}
+
+  /* ---- legend ---- */
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--ink-soft);margin-bottom:14px}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .sw{width:13px;height:13px;border-radius:2px;display:inline-block}
+
+  /* ---- specimen tags (guesses) ---- */
+  .specimen{
+    background:var(--card);border:1.5px solid var(--ink);border-radius:var(--radius);
+    box-shadow:var(--shadow);margin-bottom:12px;overflow:hidden;
+    animation:drop .38s cubic-bezier(.2,.8,.2,1);
+  }
+  @keyframes drop{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+  .spec-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;
+    padding:10px 14px;border-bottom:1px dashed var(--line)}
+  .spec-name{font-family:'Fraunces',serif;font-style:italic;font-weight:600;font-size:18px}
+  .spec-no{font-family:'Space Mono',monospace;font-size:11px;color:var(--ink-soft)}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;padding:10px 14px 6px}
+  .chip{
+    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.03em;
+    padding:5px 9px;border-radius:2px;color:var(--tile-text);white-space:nowrap;
+    display:inline-flex;flex-direction:column;line-height:1.25;
+  }
+  .chip .k{font-size:9px;text-transform:uppercase;letter-spacing:.14em;opacity:.72}
+  .chip .v{font-weight:700;font-size:12px}
+  .m-match{background:var(--match)} .m-near{background:var(--near)} .m-miss{background:var(--miss)}
+  .traits{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:6px;padding:6px 14px 14px}
+  .trait{
+    border:1px solid var(--line);border-radius:2px;padding:7px 8px;text-align:center;
+    position:relative;background:rgba(255,255,255,.35);
+  }
+  .trait.t-match{border-color:var(--match);box-shadow:inset 0 0 0 1px var(--match)}
+  .trait.t-near{border-color:var(--near);box-shadow:inset 0 0 0 1px var(--near)}
+  .trait .tk{font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-soft)}
+  .trait .tv{font-family:'Space Mono',monospace;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;gap:4px}
+  .trait .arw{font-size:15px}
+  .t-match .arw{color:var(--match)} .t-near .arw{color:var(--near)} .t-miss .arw{color:var(--miss)}
+  .trait .unit{font-size:9px;color:var(--ink-soft)}
+
+  .specimen.win{border-color:var(--match);box-shadow:0 0 0 2px var(--match),var(--shadow)}
+
+  /* ---- result banner ---- */
+  .banner{
+    display:none;background:var(--ink);color:var(--paper);border-radius:var(--radius);
+    padding:18px;margin:6px 0 16px;box-shadow:var(--shadow);
+  }
+  .banner.show{display:block;animation:drop .4s ease}
+  .banner h2{font-family:'Fraunces',serif;margin:0 0 4px;font-size:22px}
+  .banner .sci{font-style:italic}
+  .banner p{margin:6px 0 0;font-size:14px;opacity:.85}
+  .banner .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;align-items:center}
+  button.act{
+    font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.06em;text-transform:uppercase;
+    background:var(--accent);color:var(--tile-text);border:0;border-radius:2px;padding:11px 16px;cursor:pointer;
+  }
+  button.act.ghost{background:transparent;color:var(--paper);border:1px solid rgba(255,255,255,.4)}
+  button.act:hover{filter:brightness(1.08)}
+  .countdown{font-family:'Space Mono',monospace;font-size:12px;opacity:.8}
+
+  footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);
+    font-size:12px;color:var(--ink-soft);font-family:'Space Mono',monospace}
+  footer a{color:var(--accent)}
+
+  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);
+    background:var(--ink);color:var(--paper);padding:10px 18px;border-radius:4px;font-size:13px;
+    opacity:0;pointer-events:none;transition:.25s}
+  .toast.show{opacity:1;transform:translateX(-50%)}
+
+  @media (max-width:480px){
+    .spec-name{font-size:16px}
+    .traits{grid-template-columns:repeat(3,1fr)}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div>
+        <div class="eyebrow">Daily specimen · AVONET</div>
+        <h1>Bird<span class="dot">le</span></h1>
+      </div>
+      <div class="meta">
+        <div>No. <b id="puzzleNo">—</b></div>
+        <div id="puzzleDate">—</div>
+      </div>
+    </div>
+    <div class="tagline">Deduce the mystery bird from its taxonomy, ecology and measurements. Data from the <a href="https://opentraits.org/datasets/avonet" target="_blank" rel="noopener">AVONET</a> database.</div>
+  </header>
+
+  <div class="search">
+    <input id="guess" type="text" autocomplete="off" spellcheck="false"
+      placeholder="Name a bird species…  (e.g. Turdus merula)" aria-label="Guess a bird species">
+    <div class="ac" id="ac" role="listbox"></div>
+  </div>
+  <div class="guesscount">
+    <span id="remaining">8 guesses left</span>
+    <span id="mode">Daily</span>
+  </div>
+
+  <div class="legend">
+    <span><i class="sw" style="background:var(--match)"></i>exact match</span>
+    <span><i class="sw" style="background:var(--near)"></i>close</span>
+    <span><i class="sw" style="background:var(--miss)"></i>off</span>
+    <span>↑ mystery bird is larger &nbsp; ↓ smaller</span>
+  </div>
+
+  <div class="banner" id="banner"></div>
+  <div id="board"></div>
+
+  <footer>
+    Guesses compare your bird to the mystery species across taxonomy, habitat, trophic niche,
+    lifestyle, migration and six morphometric traits. Built from AVONET (Tobias et al. 2022).
+    <span id="creditGap"></span>
+  </footer>
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="birds.js"></script>
+<script>
+(function(){
+  const D = window.BIRDLE_DATA;
+  const COLS = D.cols, LU = D.lookups;
+  const ix = {}; COLS.forEach((c,i)=>ix[c]=i);
+  // hydrate birds into objects
+  const CAT = ["family","order","habitat","migration","niche","lifestyle"];
+  const birds = D.birds.map(r=>{
+    const o={name:r[ix.name]};
+    CAT.forEach(c=>{const id=r[ix[c]]; o[c]= id<0?null:LU[c][id];});
+    ["mass","wing","beak","tarsus","tail","hwi"].forEach(k=>o[k]=r[ix[k]]);
+    o.pool = r[ix.pool]===1;
+    return o;
+  });
+  const byName = {}; birds.forEach(b=>byName[b.name.toLowerCase()]=b);
+  const pool = birds.filter(b=>b.pool);
+
+  // ---- deterministic daily target ----
+  const EPOCH = Date.UTC(2024,0,1);
+  function dayIndex(d){ return Math.floor((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())-EPOCH)/864e5); }
+  // simple deterministic hash → stable shuffle of the pool
+  function mulberry(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+  const order = pool.map((_,i)=>i);
+  (function(){const rnd=mulberry(99173);for(let i=order.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[order[i],order[j]]=[order[j],order[i]];}})();
+
+  const today = new Date();
+  const DNUM = dayIndex(today);
+  let RANDOM = false, RSEED = 0;
+  function targetFor(){
+    if(RANDOM){ return pool[Math.floor(mulberry(RSEED)()*pool.length)]; }
+    return pool[ order[ ((DNUM % order.length)+order.length)%order.length ] ];
+  }
+  let TARGET = targetFor();
+
+  const MAX=8;
+  const TRAITS=[
+    {k:"mass",label:"Mass",unit:"g"},
+    {k:"wing",label:"Wing",unit:"mm"},
+    {k:"beak",label:"Beak",unit:"mm"},
+    {k:"tarsus",label:"Tarsus",unit:"mm"},
+    {k:"tail",label:"Tail",unit:"mm"},
+    {k:"hwi",label:"Hand-wing",unit:""},
+  ];
+  const CATCHIPS=[
+    {k:"order",label:"Order"},
+    {k:"family",label:"Family"},
+    {k:"habitat",label:"Habitat"},
+    {k:"niche",label:"Trophic niche"},
+    {k:"lifestyle",label:"Lifestyle"},
+    {k:"migration",label:"Migration"},
+  ];
+
+  // ---- state / persistence ----
+  const STORE = "birdle-v1";
+  function loadState(){
+    try{const s=JSON.parse(localStorage.getItem(STORE)||"{}");
+      if(!RANDOM && s.day===DNUM) return s;}catch(e){}
+    return {day:DNUM,guesses:[],done:false,won:false};
+  }
+  function saveState(){ if(RANDOM) return; localStorage.setItem(STORE,JSON.stringify(state)); }
+  let state = loadState();
+
+  // ---- DOM ----
+  const $=s=>document.querySelector(s);
+  const input=$("#guess"), ac=$("#ac"), board=$("#board"), banner=$("#banner");
+  $("#puzzleNo").textContent = RANDOM?"∞":(DNUM);
+  $("#puzzleDate").textContent = today.toLocaleDateString(undefined,{year:"numeric",month:"short",day:"numeric"});
+
+  function cmpNum(a,b){
+    if(a==null||b==null) return {cls:"t-miss",arw:""};
+    const diff=Math.abs(a-b), rel=diff/Math.max(Math.abs(b),1e-6);
+    let cls = rel<=0.05?"t-match": rel<=0.25?"t-near":"t-miss";
+    let arw = a===b?"": (b>a?"↑":"↓");   // arrow points toward the TARGET value
+    if(cls==="t-match") arw="✓";
+    return {cls,arw};
+  }
+  function catCls(gv,tv){ return (gv!=null&&gv===tv)?"m-match":"m-miss"; }
+
+  function fmt(v){ if(v==null) return "—"; return v>=100?Math.round(v):v; }
+
+  function renderGuess(name){
+    const g = byName[name.toLowerCase()];
+    const win = g.name===TARGET.name;
+    const el=document.createElement("div");
+    el.className="specimen"+(win?" win":"");
+    let chips="";
+    CATCHIPS.forEach(c=>{
+      const cls=catCls(g[c.k],TARGET[c.k]);
+      chips+=`<div class="chip ${cls}"><span class="k">${c.label}</span><span class="v">${g[c.k]??"—"}</span></div>`;
+    });
+    let traits="";
+    TRAITS.forEach(t=>{
+      const r=cmpNum(g[t.k],TARGET[t.k]);
+      traits+=`<div class="trait ${r.cls}"><div class="tk">${t.label}</div>
+        <div class="tv">${fmt(g[t.k])}<span class="arw">${r.arw}</span></div>
+        <div class="unit">${t.unit||"index"}</div></div>`;
+    });
+    el.innerHTML=`
+      <div class="spec-head">
+        <span class="spec-name">${g.name}</span>
+        <span class="spec-no">${g.family}</span>
+      </div>
+      <div class="chips">${chips}</div>
+      <div class="traits">${traits}</div>`;
+    board.prepend(el);
+  }
+
+  function shareGrid(){
+    let lines=[];
+    state.guesses.forEach(name=>{
+      const g=byName[name.toLowerCase()];
+      let s="";
+      CATCHIPS.forEach(c=>{ s+= (g[c.k]!=null&&g[c.k]===TARGET[c.k])?"🟩":"⬛"; });
+      s+=" ";
+      TRAITS.forEach(t=>{
+        const r=cmpNum(g[t.k],TARGET[t.k]);
+        s+= r.cls==="t-match"?"🟩": r.cls==="t-near"?"🟨":"⬛";
+      });
+      lines.push(s);
+    });
+    const head=`Birdle No.${RANDOM?"∞":DNUM} — ${state.won?state.guesses.length:"X"}/${MAX}`;
+    return head+"\n"+lines.join("\n");
+  }
+
+  function updateRemaining(){
+    const left=MAX-state.guesses.length;
+    $("#remaining").textContent = state.done? (state.won?"Solved":"Out of guesses")
+      : left+" guess"+(left===1?"":"es")+" left";
+  }
+
+  function finish(){
+    state.done=true; input.disabled=true; ac.classList.remove("open");
+    banner.classList.add("show");
+    const t=TARGET;
+    banner.innerHTML=`
+      <h2>${state.won?"Nailed it — ":"The mystery bird was "}<span class="sci">${t.name}</span></h2>
+      <p>${t.family} · ${t.order} · ${t.habitat||"—"} · ${t.niche||"—"} · ${t.mass!=null?t.mass+" g":""}</p>
+      <div class="row">
+        <button class="act" id="shareBtn">Share result</button>
+        <button class="act ghost" id="randBtn">Play a random bird</button>
+        <span class="countdown" id="cd"></span>
+      </div>`;
+    $("#shareBtn").onclick=()=>{
+      const txt=shareGrid();
+      (navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject())
+        .then(()=>toast("Result copied to clipboard"))
+        .catch(()=>toast(txt));
+    };
+    $("#randBtn").onclick=startRandom;
+    tickCountdown();
+    saveState();
+  }
+
+  function submit(name){
+    const g=byName[(name||"").toLowerCase()];
+    if(!g){ toast("Not a known species"); return; }
+    if(state.guesses.includes(g.name)){ toast("Already guessed"); return; }
+    state.guesses.push(g.name);
+    renderGuess(g.name);
+    input.value=""; ac.classList.remove("open"); acItems=[];
+    if(g.name===TARGET.name){ state.won=true; }
+    updateRemaining();
+    if(state.won || state.guesses.length>=MAX){ finish(); } else { saveState(); }
+  }
+
+  // ---- autocomplete ----
+  let acItems=[], acActive=-1;
+  input.addEventListener("input",()=>{
+    const q=input.value.trim().toLowerCase();
+    if(q.length<2){ ac.classList.remove("open"); return; }
+    const starts=[], contains=[];
+    for(const b of birds){
+      const n=b.name.toLowerCase();
+      if(n.startsWith(q)) starts.push(b);
+      else if(n.includes(q)) contains.push(b);
+      if(starts.length>=8) break;
+    }
+    acItems=starts.concat(contains).slice(0,8);
+    acActive=-1;
+    if(!acItems.length){ ac.classList.remove("open"); return; }
+    ac.innerHTML=acItems.map((b,i)=>
+      `<div class="ac-item" data-i="${i}"><span class="sci">${b.name}</span><span class="fam">${b.family}</span></div>`).join("");
+    ac.classList.add("open");
+    [...ac.children].forEach(c=>c.onclick=()=>submit(acItems[+c.dataset.i].name));
+  });
+  input.addEventListener("keydown",e=>{
+    if(!ac.classList.contains("open")){ if(e.key==="Enter") submit(input.value.trim()); return; }
+    if(e.key==="ArrowDown"){e.preventDefault();acActive=(acActive+1)%acItems.length;paintAc();}
+    else if(e.key==="ArrowUp"){e.preventDefault();acActive=(acActive-1+acItems.length)%acItems.length;paintAc();}
+    else if(e.key==="Enter"){e.preventDefault();submit(acItems[acActive>=0?acActive:0].name);}
+    else if(e.key==="Escape"){ac.classList.remove("open");}
+  });
+  function paintAc(){[...ac.children].forEach((c,i)=>c.classList.toggle("active",i===acActive));}
+  document.addEventListener("click",e=>{ if(!e.target.closest(".search")) ac.classList.remove("open"); });
+
+  // ---- random / replay ----
+  function startRandom(){
+    RANDOM=true; RSEED=(Date.now()^(Math.random()*1e9))|0;
+    TARGET=targetFor();
+    state={day:-1,guesses:[],done:false,won:false};
+    board.innerHTML=""; banner.classList.remove("show"); banner.innerHTML="";
+    input.disabled=false; input.value=""; input.focus();
+    $("#mode").textContent="Random"; $("#puzzleNo").textContent="∞";
+    updateRemaining();
+  }
+
+  function tickCountdown(){
+    const cd=$("#cd"); if(!cd) return;
+    function upd(){
+      if(RANDOM){cd.textContent="";return;}
+      const now=new Date();
+      const next=new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),now.getUTCDate()+1));
+      let s=Math.max(0,Math.floor((next-now)/1000));
+      const h=String(Math.floor(s/3600)).padStart(2,"0");s%=3600;
+      const m=String(Math.floor(s/60)).padStart(2,"0");const ss=String(s%60).padStart(2,"0");
+      cd.textContent="Next bird in "+h+":"+m+":"+ss;
+    }
+    upd(); clearInterval(window.__cd); window.__cd=setInterval(upd,1000);
+  }
+
+  let toastT;
+  function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("show"),2200);}
+
+  // ---- replay saved state ----
+  state.guesses.forEach(n=>renderGuess(n));
+  updateRemaining();
+  if(state.done) finish(); else input.focus();
+})();
+</script>
+</body>
+</html>
