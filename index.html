@@ -119,31 +119,6 @@
   .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);background:var(--ink);
     color:var(--paper);padding:10px 18px;border-radius:4px;font-size:13px;opacity:0;pointer-events:none;transition:.25s}
   .toast.show{opacity:1;transform:translateX(-50%)}
-  .botd{display:flex;align-items:center;gap:8px;font-family:'Space Mono',monospace;font-size:13px;
-    background:var(--ink);color:var(--paper);border-radius:var(--radius);padding:10px 14px;margin:16px 0 2px;box-shadow:var(--shadow)}
-  .botd b{font-weight:700}
-  .botd.practice{background:transparent;color:var(--ink-soft);border:1.5px dashed var(--line);box-shadow:none}
-  .lb{background:var(--card);border:1.5px solid var(--ink);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px;margin:22px 0 0}
-  .lb-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
-  .lb-head h3{font-family:'Fraunces',serif;margin:0;font-size:19px}
-  .lb-players{font-family:'Space Mono',monospace;font-size:12px;color:var(--ink-soft)}
-  .lb-id{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
-  #lbName{font-family:'Inter',sans-serif;font-size:14px;padding:8px 10px;border:1.5px solid var(--ink);
-    border-radius:var(--radius);background:#fff;color:var(--ink);flex:1 1 140px;min-width:120px}
-  #lbName:focus{outline:3px solid rgba(47,107,82,.35);outline-offset:1px}
-  button.ghost2{background:var(--card);color:var(--ink);border:1.5px solid var(--ink)}
-  .lb-list{list-style:none;margin:6px 0 0;padding:0}
-  .lb-list li{display:grid;grid-template-columns:26px 1fr auto;align-items:center;gap:10px;
-    padding:8px 6px;border-bottom:1px solid var(--line);font-size:14px}
-  .lb-list li:last-child{border-bottom:0}
-  .lb-list li .rk{font-family:'Space Mono',monospace;font-size:12px;color:var(--ink-soft);text-align:right}
-  .lb-list li .who{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .lb-list li .sc{font-family:'Space Mono',monospace;font-weight:700;font-size:13px}
-  .lb-list li.me{background:rgba(47,107,82,.10);border-radius:2px}
-  .lb-note{font-family:'Space Mono',monospace;font-size:11px;color:var(--ink-soft);margin-top:10px;line-height:1.5}
-  .lb-note.prompt{color:var(--accent);font-weight:700}
-  .lb-remember{font-family:'Space Mono',monospace;font-size:11px;color:var(--ink-soft);margin:-4px 0 8px;line-height:1.5}
-  .banner .lbhint{font-family:'Space Mono',monospace;font-size:12px;opacity:.9;margin-top:10px}
   @media (max-width:480px){ .spec-name{font-size:16px} .traits{grid-template-columns:repeat(3,1fr)} }
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -183,8 +158,6 @@
     <div class="defs" id="defs"></div>
   </div>
 
-  <div class="botd" id="botd"></div>
-
   <div class="search">
     <input id="guess" type="text" autocomplete="off" spellcheck="false" placeholder="" aria-label="Guess a bird">
     <div class="ac" id="ac" role="listbox"></div>
@@ -198,18 +171,6 @@
 
   <div class="banner" id="banner"></div>
   <div id="board"></div>
-
-  <section class="lb" id="lb">
-    <div class="lb-head"><h3 id="lbTitle"></h3><span class="lb-players" id="lbPlayers"></span></div>
-    <div class="lb-id">
-      <input id="lbName" maxlength="24" placeholder="">
-      <button class="act" id="lbSave"></button>
-      <button class="act ghost2" id="lbSignIn"></button>
-    </div>
-    <div class="lb-remember" id="lbRemember"></div>
-    <ol class="lb-list" id="lbList"></ol>
-    <div class="lb-note" id="lbNote"></div>
-  </section>
 
   <footer id="footer"></footer>
 </div>
@@ -337,49 +298,6 @@
   let LANG="en";
   try{ const l=localStorage.getItem("birdle-lang"); if(l && UI[l]) LANG=l; }catch(e){}
   let L = UI[LANG];
-
-  // ====== Leaderboard config — paste your Firebase project settings here ======
-  const FIREBASE_CONFIG = {
-    apiKey: "YOUR_FIREBASE_API_KEY",
-    authDomain: "YOUR_PROJECT.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    appId: "YOUR_APP_ID"
-  };
-  const LB_ENABLED = !/YOUR_/.test(FIREBASE_CONFIG.apiKey||"");
-
-  const T2 = {
-    en:{botd:"Bird of the Day",practice:"Practice",notCounted:"random bird — not counted",
-      lbTitle:"Leaderboard", players:"%n playing today", name:"Name", save:"Save",
-      signIn:"Sign in with Google", signOut:"Sign out",
-      notSet:"Leaderboard isn't connected yet. See the README to link a free Firebase project (a few minutes, no server needed).",
-      you:"you", empty:"No results yet today — be the first to solve it!", loading:"Loading leaderboard…",
-      won:"%n / "+8, lost:"X", offline:"Leaderboard unavailable right now.",
-      note:"Scores post automatically when you finish today's Bird of the Day. One entry per person per region per day.",
-      promptName:"Choose a username to save your score and compare with others.",
-      savedAs:"Saved to today's leaderboard as “%n”.",
-      remember:"Your username is how your scores are tracked across days and devices — remember it (there's no password), and keep it unique." },
-    de:{botd:"Vogel des Tages",practice:"Übung",notCounted:"Zufallsvogel — zählt nicht",
-      lbTitle:"Bestenliste", players:"%n heute aktiv", name:"Name", save:"Speichern",
-      signIn:"Mit Google anmelden", signOut:"Abmelden",
-      notSet:"Bestenliste ist noch nicht verbunden. Siehe README, um ein kostenloses Firebase-Projekt zu verknüpfen (wenige Minuten, kein Server nötig).",
-      you:"du", empty:"Heute noch keine Ergebnisse — sei die/der Erste!", loading:"Bestenliste wird geladen…",
-      won:"%n / "+8, lost:"X", offline:"Bestenliste derzeit nicht verfügbar.",
-      note:"Ergebnisse werden automatisch gespeichert, wenn du den heutigen Vogel des Tages beendest. Ein Eintrag pro Person, Region und Tag.",
-      promptName:"Wähle einen Benutzernamen, um dein Ergebnis zu speichern und dich zu vergleichen.",
-      savedAs:"Im heutigen Ranking gespeichert als „%n“.",
-      remember:"Dein Benutzername verknüpft deine Ergebnisse über Tage und Geräte hinweg — merke ihn dir (kein Passwort) und wähle ihn eindeutig." },
-    it:{botd:"Uccello del giorno",practice:"Pratica",notCounted:"uccello casuale — non conta",
-      lbTitle:"Classifica", players:"%n oggi", name:"Nome", save:"Salva",
-      signIn:"Accedi con Google", signOut:"Esci",
-      notSet:"La classifica non è ancora collegata. Vedi il README per collegare un progetto Firebase gratuito (pochi minuti, nessun server).",
-      you:"tu", empty:"Ancora nessun risultato oggi — sii il primo a risolverlo!", loading:"Caricamento classifica…",
-      won:"%n / "+8, lost:"X", offline:"Classifica non disponibile al momento.",
-      note:"I punteggi vengono salvati automaticamente al termine dell'Uccello del giorno. Una voce per persona, regione e giorno.",
-      promptName:"Scegli un nome utente per salvare il tuo punteggio e confrontarti con gli altri.",
-      savedAs:"Salvato nella classifica di oggi come “%n”.",
-      remember:"Il tuo nome utente collega i tuoi punteggi tra giorni e dispositivi — ricordalo (nessuna password) e scegline uno unico." }
-  };
-  let T = T2[LANG];
   function nameFor(b){ const loc = LANG==="de"?b.de : LANG==="it"?b.it : null; return loc || b.common || b.name; }
   function catVal(kind,val){ if(val==null) return null; if(LANG==="en") return val; const m=CATV[kind]; return (m&&m[val]&&m[val][LANG])||val; }
   function regionName(){ const en = region<0?"Worldwide":REGIONS[region]; return (LANG!=="en"&&REGION_L[en]&&REGION_L[en][LANG])||en; }
@@ -464,19 +382,12 @@
     return `Birdle · ${regionName()} · ${L.no}${RANDOM?"∞":DNUM} — ${state.won?state.guesses.length:"X"}/${MAX}\n`+lines.join("\n");
   }
 
-  function updateBadge(){
-    const el=$("#botd"); if(!el) return;
-    if(RANDOM){ el.className="botd practice"; el.innerHTML=`🎲 <b>${T.practice}</b> — ${T.notCounted}`; }
-    else { el.className="botd"; el.innerHTML=`🗓 <b>${T.botd}</b> · ${regionName()} · ${$("#puzzleDate").textContent}`; }
-  }
-
   function updateRemaining(){
     const left=MAX-state.guesses.length;
     $("#remaining").textContent = state.done ? (state.won?L.solved:L.outOf)
       : (left===1?L.gLeft1:L.gLeft.replace("%n",left));
     $("#mode").textContent = RANDOM ? L.randomPrefix+" · "+regionName() : regionName();
     $("#puzzleNo").textContent = RANDOM?"∞":DNUM;
-    updateBadge();
   }
 
   function finish(){
@@ -486,7 +397,6 @@
     banner.innerHTML=`
       <h2>${state.won?L.nailed:L.was}${rev}</h2>
       <p>${t.family} · ${t.order} · ${catVal("habitat",t.habitat)||"—"} · ${catVal("niche",t.niche)||"—"} · ${t.mass!=null?t.mass+" g":""}</p>
-      ${LB_ENABLED && !RANDOM ? `<p class="lbhint">👇 ${hasName()?T.savedAs.replace("%n",localName()||"Anonymous"):T.promptName}</p>` : ""}
       <div class="row">
         <button class="act" id="shareBtn">${L.share}</button>
         <button class="act ghost" id="randBtn">${L.random}</button>
@@ -506,7 +416,7 @@
     input.value=""; ac.classList.remove("open"); acItems=[];
     if(g.name===TARGET.name) state.won=true;
     updateRemaining();
-    if(state.won||state.guesses.length>=MAX){ finish(); tryAutoSubmit(); } else saveState();
+    if(state.won||state.guesses.length>=MAX) finish(); else saveState();
   }
 
   // ---- autocomplete ----
@@ -563,137 +473,6 @@
   let toastT;
   function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("show"),2200);}
 
-  // ============ leaderboard (Firebase, optional) ============
-  const FB={db:null,uid:null,api:null,ready:false,failed:false};
-  let lastSummary=null;
-  function localName(){ try{return localStorage.getItem("birdle-name")||"";}catch(e){return "";} }
-  function setLocalName(n){ try{localStorage.setItem("birdle-name",n);}catch(e){} }
-  function bucket(){ return region+":"+DNUM; }
-  function slug(s){ return (s||"").trim().toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,40); }
-  function hasName(){ return !!slug(localName()); }
-  function playerKey(){ const n=slug(localName()); return n?("u_"+n):("anon_"+(FB.uid||"x")); }
-
-  async function lbInit(){
-    $("#lbName").value = localName();
-    if(!LB_ENABLED){ lbRender(); return; }
-    try{
-      const [appM,authM,fsM] = await Promise.all([
-        import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"),
-        import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"),
-        import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js")
-      ]);
-      const app=appM.initializeApp(FIREBASE_CONFIG);
-      FB.auth=authM.getAuth(app); FB.db=fsM.getFirestore(app);
-      FB.api={...fsM, GoogleAuthProvider:authM.GoogleAuthProvider, signInWithPopup:authM.signInWithPopup, signOut:authM.signOut};
-      authM.onAuthStateChanged(FB.auth,u=>{
-        FB.uid=u?u.uid:null; FB.ready=!!u; FB.signedIn=!!(u&&!u.isAnonymous);
-        if(u&&u.displayName&&!localName()){ setLocalName(u.displayName); $("#lbName").value=u.displayName; }
-        lbRefresh();
-      });
-      await authM.signInAnonymously(FB.auth);
-    }catch(e){ console.warn("Leaderboard init failed:",e); FB.failed=true; lbRender(); }
-  }
-
-  function sumId(){ return region+"_"+DNUM; }
-
-  async function lbSubmit(){
-    if(!LB_ENABLED||!FB.db||!FB.uid||RANDOM) return;
-    try{
-      const {doc,runTransaction}=FB.api;
-      const key=playerKey();
-      const resRef=doc(FB.db,"results",`${region}_${DNUM}_${key}`);
-      const sumRef=doc(FB.db,"summaries",sumId());
-      const entry={key, uid:FB.uid, name:(localName()||"Anonymous").slice(0,24),
-        guesses:state.guesses.length, won:!!state.won, ts:Date.now()};
-      await runTransaction(FB.db, async tx=>{
-        const rSnap=await tx.get(resRef);
-        const sSnap=await tx.get(sumRef);
-        const isNew=!rSnap.exists();
-        const cur=sSnap.exists()?(sSnap.data()||{}):{};
-        let top=Array.isArray(cur.top)?cur.top.filter(e=>e.key!==key):[];
-        top.push(entry);
-        top.sort((a,b)=>(b.won-a.won)||(a.guesses-b.guesses)||(a.ts-b.ts));
-        top=top.slice(0,100);
-        const players=(cur.players||0)+(isNew?1:0);
-        tx.set(resRef,{...entry, region, day:DNUM, bucket:bucket()});
-        tx.set(sumRef,{top, players, region, day:DNUM, updated:Date.now()});
-      });
-      lbRefresh();
-    }catch(e){ console.warn("submit failed",e); }
-  }
-
-  // Every viewer reads ONE summary document, not the whole bucket.
-  async function lbRefresh(){
-    if(!LB_ENABLED||!FB.db){ lbRender(); return; }
-    try{
-      const {doc,getDoc}=FB.api;
-      const sSnap=await getDoc(doc(FB.db,"summaries",sumId()));
-      const d=sSnap.exists()?(sSnap.data()||{}):{};
-      lastSummary={top:Array.isArray(d.top)?d.top:[], players:d.players||0};
-      lbRender();
-    }catch(e){ console.warn("refresh failed",e); FB.failed=true; lbRender(); }
-  }
-
-  function updateSignBtn(signedIn){
-    const b=$("#lbSignIn"); if(!LB_ENABLED){ b.style.display="none"; return; }
-    b.style.display=""; b.textContent = signedIn ? T.signOut : T.signIn;
-    b.onclick = async ()=>{
-      try{
-        if(signedIn){ await FB.api.signOut(FB.auth); }
-        else { await FB.api.signInWithPopup(FB.auth, new FB.api.GoogleAuthProvider()); }
-      }catch(e){ console.warn(e); }
-    };
-  }
-
-  function lbRender(){
-    $("#lbTitle").textContent = `${T.botd} · ${T.lbTitle}`;
-    $("#lbSave").textContent = T.save;
-    $("#lbName").placeholder = T.name;
-    $("#lbRemember").textContent = LB_ENABLED ? T.remember : "";
-    const list=$("#lbList"), players=$("#lbPlayers"), note=$("#lbNote");
-    note.classList.remove("prompt");
-    if(!LB_ENABLED){ list.innerHTML=""; players.textContent=""; note.textContent=T.notSet; $("#lbSignIn").style.display="none"; $("#lbRemember").textContent=""; return; }
-    if(FB.failed){ list.innerHTML=""; players.textContent=""; note.textContent=T.offline; return; }
-    updateSignBtn(!!FB.signedIn);
-    if(lastSummary===null){ list.innerHTML=""; players.textContent=""; note.textContent=T.loading; return; }
-    const top=lastSummary.top||[]; const myKey=playerKey();
-    players.textContent = T.players.replace("%n", lastSummary.players||0);
-    // note appears only after finishing the daily bird: prompt to name, or confirm saved
-    if(!RANDOM && state.done && !state.submitted && !hasName()){ note.textContent=T.promptName; note.classList.add("prompt"); }
-    else if(!RANDOM && state.submitted){ note.textContent=T.savedAs.replace("%n", localName()||"Anonymous"); }
-    else { note.textContent=T.note; }
-    if(!top.length && !(state.done&&state.submitted)){ list.innerHTML=`<li><span class="rk"></span><span class="who">${T.empty}</span><span class="sc"></span></li>`; return; }
-    let rows = top.slice(0,20).map((r,i)=>{
-      const me = r.key===myKey;
-      const score = r.won ? T.won.replace("%n",r.guesses) : T.lost;
-      const who = (r.name||"Anonymous") + (me?` (${T.you})`:"");
-      return `<li class="${me?"me":""}"><span class="rk">${i+1}</span><span class="who">${who}</span><span class="sc">${score}</span></li>`;
-    });
-    if(!RANDOM && state.done && state.submitted && !top.slice(0,20).some(e=>e.key===myKey)){
-      const idx=top.findIndex(e=>e.key===myKey);
-      const rk = idx>=0 ? (idx+1) : "—";
-      const score = state.won ? T.won.replace("%n",state.guesses.length) : T.lost;
-      const who = (localName()||"Anonymous")+` (${T.you})`;
-      rows.push(`<li class="me"><span class="rk">${rk}</span><span class="who">${who}</span><span class="sc">${score}</span></li>`);
-    }
-    list.innerHTML = rows.join("");
-  }
-
-  function doSubmit(){ if(RANDOM) return; state.submitted=true; saveState(); lbSubmit(); }
-  function tryAutoSubmit(){
-    if(RANDOM||state.submitted) return;
-    if(hasName()) doSubmit();      // returning player with a username → save straight away
-    else lbRender();               // no username yet → show the post-finish prompt, wait for Save
-  }
-
-  $("#lbSave").onclick=()=>{
-    const n=$("#lbName").value.trim().slice(0,24); setLocalName(n);
-    if(!RANDOM && state.done && !state.submitted && hasName()){ doSubmit(); finish(); }
-    else if(state.done && state.submitted){ lbSubmit(); finish(); }
-    else lbRefresh();
-    toast(T.save+" ✓");
-  };
-
   // ---- chrome / language ----
   function rebuildRegionOptions(){
     const cur=String(region);
@@ -725,12 +504,11 @@
     updateRemaining();
   }
   function setLang(l){
-    if(!UI[l]) return; LANG=l; L=UI[l]; T=T2[l];
+    if(!UI[l]) return; LANG=l; L=UI[l];
     try{ localStorage.setItem("birdle-lang",l); }catch(e){}
     applyChrome();
     board.innerHTML=""; state.guesses.forEach(renderGuess);
     if(state.done) finish();
-    lbRender();
   }
   [...document.querySelectorAll("#langsw button")].forEach(b=>b.onclick=()=>setLang(b.dataset.lang));
   helpToggle.onclick=()=>{ const open=panel.hasAttribute("hidden"); if(open){panel.removeAttribute("hidden");helpToggle.classList.add("active");} else {panel.setAttribute("hidden","");helpToggle.classList.remove("active");} };
@@ -747,12 +525,10 @@
     clearInterval(window.__cd);
     state.guesses.forEach(renderGuess); updateRemaining();
     if(state.done) finish(); else input.focus();
-    lastSummary=null; lbRefresh();
   }
 
   applyChrome();
   initPuzzle();
-  lbInit();
 })();
 </script>
 </body>
