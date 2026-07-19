@@ -10,66 +10,60 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --paper:#e5e1d1;          /* aged manila drawer */
-    --card:#f4f1e6;           /* specimen tag */
-    --ink:#23302a;            /* pine ink */
-    --ink-soft:#5c6159;
-    --line:#c9c3ad;           /* faint rule */
-    --accent:#2f6b52;         /* label green */
-    --band:#bd4530;           /* ringing-band red, used sparingly */
-    --match:#4a7a43;          /* correct */
-    --near:#c68a2b;           /* close */
-    --miss:#8f897c;           /* far */
-    --tile-text:#f6f3ea;
-    --radius:3px;
-    --shadow:0 1px 0 rgba(0,0,0,.06), 0 6px 18px rgba(35,48,42,.10);
+    --paper:#e5e1d1; --card:#f4f1e6; --ink:#23302a; --ink-soft:#5c6159; --line:#c9c3ad;
+    --accent:#2f6b52; --band:#bd4530; --match:#4a7a43; --near:#c68a2b; --miss:#8f897c;
+    --tile-text:#f6f3ea; --radius:3px; --shadow:0 1px 0 rgba(0,0,0,.06), 0 6px 18px rgba(35,48,42,.10);
   }
-  *{box-sizing:border-box}
-  html,body{margin:0}
+  *{box-sizing:border-box} html,body{margin:0}
   body{
     background:var(--paper);
-    background-image:
-      radial-gradient(circle at 20% 10%, rgba(255,255,255,.35), transparent 40%),
+    background-image:radial-gradient(circle at 20% 10%, rgba(255,255,255,.35), transparent 40%),
       repeating-linear-gradient(0deg, transparent, transparent 27px, rgba(35,48,42,.035) 28px);
-    color:var(--ink);
-    font-family:'Inter',system-ui,sans-serif;
-    line-height:1.45;
-    -webkit-font-smoothing:antialiased;
+    color:var(--ink);font-family:'Inter',system-ui,sans-serif;line-height:1.45;-webkit-font-smoothing:antialiased;
   }
   .wrap{max-width:760px;margin:0 auto;padding:20px 16px 80px}
-
-  /* ---- header ---- */
   header{border-bottom:2px solid var(--ink);padding-bottom:14px;margin-bottom:18px}
   .brand{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
-  h1{
-    font-family:'Fraunces',serif;font-weight:900;font-size:clamp(38px,9vw,64px);
-    letter-spacing:-.02em;margin:0;line-height:.9;
-  }
+  h1{font-family:'Fraunces',serif;font-weight:900;font-size:clamp(38px,9vw,64px);letter-spacing:-.02em;margin:0;line-height:.9}
   h1 .dot{color:var(--band)}
-  .eyebrow{
-    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.22em;
-    text-transform:uppercase;color:var(--ink-soft);
-  }
+  .eyebrow{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-soft)}
   .meta{font-family:'Space Mono',monospace;font-size:12px;color:var(--ink-soft);text-align:right}
   .meta b{color:var(--ink)}
   .tagline{font-size:14px;color:var(--ink-soft);margin-top:6px}
   .tagline a{color:var(--accent);text-decoration:none;border-bottom:1px solid var(--line)}
 
-  /* ---- input ---- */
-  .search{position:relative;margin:18px 0 8px}
-  #guess{
-    width:100%;padding:14px 16px;font-size:16px;font-family:'Inter',sans-serif;
-    background:var(--card);border:1.5px solid var(--ink);border-radius:var(--radius);
-    color:var(--ink);box-shadow:var(--shadow);
-  }
+  .controls{display:flex;align-items:center;gap:10px;margin-top:16px;flex-wrap:wrap}
+  .ctl{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-soft)}
+  #region{font-family:'Inter',sans-serif;font-size:14px;color:var(--ink);background:var(--card);
+    border:1.5px solid var(--ink);border-radius:var(--radius);padding:8px 12px;cursor:pointer;box-shadow:var(--shadow)}
+  #region:focus{outline:3px solid rgba(47,107,82,.35);outline-offset:1px}
+  .help{width:34px;height:34px;border-radius:var(--radius);border:1.5px solid var(--ink);background:var(--card);
+    color:var(--ink);font-family:'Space Mono',monospace;font-weight:700;cursor:pointer;font-size:15px}
+  .help.active{background:var(--ink);color:var(--paper)}
+  .langsw{margin-left:auto;display:inline-flex;border:1.5px solid var(--ink);border-radius:var(--radius);overflow:hidden}
+  .langsw button{font-family:'Space Mono',monospace;font-size:12px;padding:7px 11px;background:var(--card);
+    border:0;border-left:1px solid var(--line);color:var(--ink-soft);cursor:pointer}
+  .langsw button:first-child{border-left:0}
+  .langsw button.active{background:var(--accent);color:var(--tile-text)}
+
+  .panel{background:var(--card);border:1.5px solid var(--ink);border-radius:var(--radius);box-shadow:var(--shadow);
+    padding:14px 16px;margin:16px 0 4px}
+  .panel[hidden]{display:none}
+  .panel h3{font-family:'Fraunces',serif;margin:0 0 8px;font-size:18px}
+  .panel h4{font-family:'Space Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink-soft);margin:14px 0 8px}
+  .panel p{font-size:13px;margin:0 0 8px}
+  .defs{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:10px}
+  .def{font-size:12.5px} .def b{font-family:'Space Mono',monospace;display:block;font-size:11px;
+    text-transform:uppercase;letter-spacing:.06em;color:var(--accent);margin-bottom:2px}
+
+  .search{position:relative;margin:16px 0 8px}
+  #guess{width:100%;padding:14px 16px;font-size:16px;font-family:'Inter',sans-serif;background:var(--card);
+    border:1.5px solid var(--ink);border-radius:var(--radius);color:var(--ink);box-shadow:var(--shadow)}
   #guess::placeholder{color:#9a9585;font-style:italic}
   #guess:focus{outline:3px solid rgba(47,107,82,.35);outline-offset:1px}
   #guess:disabled{opacity:.5}
-  .ac{
-    position:absolute;z-index:20;left:0;right:0;top:calc(100% + 4px);
-    background:var(--card);border:1.5px solid var(--ink);border-radius:var(--radius);
-    box-shadow:var(--shadow);max-height:300px;overflow:auto;display:none;
-  }
+  .ac{position:absolute;z-index:20;left:0;right:0;top:calc(100% + 4px);background:var(--card);
+    border:1.5px solid var(--ink);border-radius:var(--radius);box-shadow:var(--shadow);max-height:300px;overflow:auto;display:none}
   .ac.open{display:block}
   .ac-item{padding:9px 14px;cursor:pointer;display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid var(--line)}
   .ac-item:last-child{border-bottom:0}
@@ -79,49 +73,27 @@
   .ac-item.active .fam,.ac-item:hover .fam{color:rgba(246,243,234,.75)}
 
   .guesscount{font-family:'Space Mono',monospace;font-size:12px;color:var(--ink-soft);margin:2px 2px 16px;display:flex;justify-content:space-between}
-
-  .controls{display:flex;align-items:center;gap:10px;margin-top:16px}
-  .ctl{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-soft)}
-  #region{
-    font-family:'Inter',sans-serif;font-size:14px;color:var(--ink);
-    background:var(--card);border:1.5px solid var(--ink);border-radius:var(--radius);
-    padding:8px 12px;cursor:pointer;box-shadow:var(--shadow);flex:0 1 auto;
-  }
-  #region:focus{outline:3px solid rgba(47,107,82,.35);outline-offset:1px}
-
-  /* ---- legend ---- */
   .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--ink-soft);margin-bottom:14px}
   .legend span{display:inline-flex;align-items:center;gap:6px}
   .sw{width:13px;height:13px;border-radius:2px;display:inline-block}
 
-  /* ---- specimen tags (guesses) ---- */
-  .specimen{
-    background:var(--card);border:1.5px solid var(--ink);border-radius:var(--radius);
-    box-shadow:var(--shadow);margin-bottom:12px;overflow:hidden;
-    animation:drop .38s cubic-bezier(.2,.8,.2,1);
-  }
+  .specimen{background:var(--card);border:1.5px solid var(--ink);border-radius:var(--radius);box-shadow:var(--shadow);
+    margin-bottom:12px;overflow:hidden;animation:drop .38s cubic-bezier(.2,.8,.2,1)}
   @keyframes drop{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
-  .spec-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;
-    padding:10px 14px;border-bottom:1px dashed var(--line)}
+  .spec-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:10px 14px;border-bottom:1px dashed var(--line)}
   .spec-title{display:flex;flex-direction:column;line-height:1.15}
   .spec-name{font-family:'Fraunces',serif;font-weight:600;font-size:18px}
   .spec-name.sci-only{font-style:italic}
   .spec-sci{font-family:'Fraunces',serif;font-style:italic;font-size:12px;color:var(--ink-soft);font-weight:400}
   .spec-no{font-family:'Space Mono',monospace;font-size:11px;color:var(--ink-soft)}
   .chips{display:flex;flex-wrap:wrap;gap:6px;padding:10px 14px 6px}
-  .chip{
-    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.03em;
-    padding:5px 9px;border-radius:2px;color:var(--tile-text);white-space:nowrap;
-    display:inline-flex;flex-direction:column;line-height:1.25;
-  }
+  .chip{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.03em;padding:5px 9px;border-radius:2px;
+    color:var(--tile-text);white-space:nowrap;display:inline-flex;flex-direction:column;line-height:1.25}
   .chip .k{font-size:9px;text-transform:uppercase;letter-spacing:.14em;opacity:.72}
   .chip .v{font-weight:700;font-size:12px}
-  .m-match{background:var(--match)} .m-near{background:var(--near)} .m-miss{background:var(--miss)}
+  .m-match{background:var(--match)} .m-miss{background:var(--miss)}
   .traits{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:6px;padding:6px 14px 14px}
-  .trait{
-    border:1px solid var(--line);border-radius:2px;padding:7px 8px;text-align:center;
-    position:relative;background:rgba(255,255,255,.35);
-  }
+  .trait{border:1px solid var(--line);border-radius:2px;padding:7px 8px;text-align:center;background:rgba(255,255,255,.35)}
   .trait.t-match{border-color:var(--match);box-shadow:inset 0 0 0 1px var(--match)}
   .trait.t-near{border-color:var(--near);box-shadow:inset 0 0 0 1px var(--near)}
   .trait .tk{font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-soft)}
@@ -129,40 +101,25 @@
   .trait .arw{font-size:15px}
   .t-match .arw{color:var(--match)} .t-near .arw{color:var(--near)} .t-miss .arw{color:var(--miss)}
   .trait .unit{font-size:9px;color:var(--ink-soft)}
-
   .specimen.win{border-color:var(--match);box-shadow:0 0 0 2px var(--match),var(--shadow)}
 
-  /* ---- result banner ---- */
-  .banner{
-    display:none;background:var(--ink);color:var(--paper);border-radius:var(--radius);
-    padding:18px;margin:6px 0 16px;box-shadow:var(--shadow);
-  }
+  .banner{display:none;background:var(--ink);color:var(--paper);border-radius:var(--radius);padding:18px;margin:6px 0 16px;box-shadow:var(--shadow)}
   .banner.show{display:block;animation:drop .4s ease}
   .banner h2{font-family:'Fraunces',serif;margin:0 0 4px;font-size:22px}
   .banner .sci{font-style:italic}
   .banner p{margin:6px 0 0;font-size:14px;opacity:.85}
   .banner .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;align-items:center}
-  button.act{
-    font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.06em;text-transform:uppercase;
-    background:var(--accent);color:var(--tile-text);border:0;border-radius:2px;padding:11px 16px;cursor:pointer;
-  }
+  button.act{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.06em;text-transform:uppercase;
+    background:var(--accent);color:var(--tile-text);border:0;border-radius:2px;padding:11px 16px;cursor:pointer}
   button.act.ghost{background:transparent;color:var(--paper);border:1px solid rgba(255,255,255,.4)}
   button.act:hover{filter:brightness(1.08)}
   .countdown{font-family:'Space Mono',monospace;font-size:12px;opacity:.8}
-
-  footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);
-    font-size:12px;color:var(--ink-soft);font-family:'Space Mono',monospace}
+  footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--ink-soft);font-family:'Space Mono',monospace}
   footer a{color:var(--accent)}
-
-  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);
-    background:var(--ink);color:var(--paper);padding:10px 18px;border-radius:4px;font-size:13px;
-    opacity:0;pointer-events:none;transition:.25s}
+  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);background:var(--ink);
+    color:var(--paper);padding:10px 18px;border-radius:4px;font-size:13px;opacity:0;pointer-events:none;transition:.25s}
   .toast.show{opacity:1;transform:translateX(-50%)}
-
-  @media (max-width:480px){
-    .spec-name{font-size:16px}
-    .traits{grid-template-columns:repeat(3,1fr)}
-  }
+  @media (max-width:480px){ .spec-name{font-size:16px} .traits{grid-template-columns:repeat(3,1fr)} }
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -171,47 +128,51 @@
   <header>
     <div class="brand">
       <div>
-        <div class="eyebrow">Daily specimen · AVONET</div>
+        <div class="eyebrow" id="eyebrow">Daily specimen · AVONET</div>
         <h1>Bird<span class="dot">le</span></h1>
       </div>
       <div class="meta">
-        <div>No. <b id="puzzleNo">—</b></div>
+        <div><span id="noLabel">No.</span> <b id="puzzleNo">—</b></div>
         <div id="puzzleDate">—</div>
       </div>
     </div>
-    <div class="tagline">Deduce the mystery bird from its taxonomy, ecology and measurements. Data from the <a href="https://opentraits.org/datasets/avonet" target="_blank" rel="noopener">AVONET</a> database.</div>
+    <div class="tagline" id="tagline"></div>
   </header>
 
   <div class="controls">
-    <label class="ctl" for="region">Region</label>
-    <select id="region" aria-label="Choose region"></select>
+    <label class="ctl" id="regionLabel" for="region">Region</label>
+    <select id="region" aria-label="Region"></select>
+    <button class="help" id="helpToggle" aria-label="How to read the tiles">?</button>
+    <div class="langsw" id="langsw">
+      <button data-lang="en">EN</button>
+      <button data-lang="de">DE</button>
+      <button data-lang="it">IT</button>
+    </div>
+  </div>
+
+  <div class="panel" id="panel" hidden>
+    <h3 id="panelTitle"></h3>
+    <p id="panelCat"></p>
+    <p id="panelArrow"></p>
+    <h4 id="defsHead"></h4>
+    <div class="defs" id="defs"></div>
   </div>
 
   <div class="search">
-    <input id="guess" type="text" autocomplete="off" spellcheck="false"
-      placeholder="Name a bird…  (e.g. American Robin or Turdus migratorius)" aria-label="Guess a bird species">
+    <input id="guess" type="text" autocomplete="off" spellcheck="false" placeholder="" aria-label="Guess a bird">
     <div class="ac" id="ac" role="listbox"></div>
   </div>
   <div class="guesscount">
-    <span id="remaining">8 guesses left</span>
-    <span id="mode">Daily</span>
+    <span id="remaining"></span>
+    <span id="mode"></span>
   </div>
 
-  <div class="legend">
-    <span><i class="sw" style="background:var(--match)"></i>exact match</span>
-    <span><i class="sw" style="background:var(--near)"></i>close</span>
-    <span><i class="sw" style="background:var(--miss)"></i>off</span>
-    <span>↑ mystery bird is larger &nbsp; ↓ smaller</span>
-  </div>
+  <div class="legend" id="legend"></div>
 
   <div class="banner" id="banner"></div>
   <div id="board"></div>
 
-  <footer>
-    Guesses compare your bird to the mystery species across taxonomy, habitat, trophic niche,
-    lifestyle, migration and six morphometric traits. Built from AVONET (Tobias et al. 2022).
-    <span id="creditGap"></span>
-  </footer>
+  <footer id="footer"></footer>
 </div>
 <div class="toast" id="toast"></div>
 
@@ -221,195 +182,241 @@
   const D = window.BIRDLE_DATA;
   const COLS = D.cols, LU = D.lookups;
   const ix = {}; COLS.forEach((c,i)=>ix[c]=i);
-  // hydrate birds into objects
   const CAT = ["family","order","habitat","migration","niche","lifestyle"];
   const birds = D.birds.map(r=>{
-    const o={name:r[ix.name], common:(r[ix.common]||null)};
+    const o={name:r[ix.name], common:(r[ix.common]||null), de:(r[ix.de]||null), it:(r[ix.it]||null)};
     CAT.forEach(c=>{const id=r[ix[c]]; o[c]= id<0?null:LU[c][id];});
     ["mass","wing","beak","tarsus","tail","hwi"].forEach(k=>o[k]=r[ix[k]]);
-    o.pool = r[ix.pool]===1;
-    o.reg  = r[ix.reg]|0;
-    o.label = o.common || o.name;   // what the player sees first
+    o.pool = r[ix.pool]===1; o.reg = r[ix.reg]|0;
     return o;
   });
   const byName = {};
-  birds.forEach(b=>{ byName[b.name.toLowerCase()]=b; if(b.common) byName[b.common.toLowerCase()]=b; });
+  birds.forEach(b=>{ [b.name,b.common,b.de,b.it].forEach(n=>{ if(n) byName[n.toLowerCase()]=b; }); });
+
+  // ============ i18n ============
+  const REGIONS = D.regions || [];
+  const UI = {
+    en:{ eyebrow:"Daily specimen · AVONET", no:"No.",
+      tagPre:"Deduce the mystery bird from its taxonomy, ecology and measurements. Data from the ", tagPost:" database.",
+      region:"Region", worldwide:"Worldwide",
+      placeholder:"Name a bird…  (e.g. American Robin or Turdus migratorius)",
+      solved:"Solved", outOf:"Out of guesses", gLeft:"%n guesses left", gLeft1:"1 guess left",
+      exact:"exact match", close:"close", off:"off", arrows:"↑ mystery bird is larger \u00A0 ↓ smaller",
+      share:"Share result", random:"Play a random bird", randomPrefix:"Random",
+      nailed:"Nailed it — ", was:"The mystery bird was ", next:"Next bird in ",
+      notKnown:"Not a known species", already:"Already guessed", copied:"Result copied to clipboard",
+      footer:"Each guess is compared to the mystery bird across taxonomy, habitat, trophic niche, lifestyle, migration and six morphometric traits. Built from AVONET (Tobias et al. 2022).",
+      panelTitle:"Reading the specimen tag",
+      panelCat:"The coloured chips (Order, Family, Habitat, Niche, Lifestyle, Migration) turn green when they match the mystery bird, grey when they don't.",
+      panelArrow:"For the measurements, ↑ means the mystery bird's value is larger than your guess and ↓ smaller. Green = within 5%, amber = within 25%.",
+      defsHead:"What each measurement means" },
+    de:{ eyebrow:"Tagesexemplar · AVONET", no:"Nr.",
+      tagPre:"Errate den gesuchten Vogel anhand von Taxonomie, Ökologie und Maßen. Daten aus der Datenbank ", tagPost:".",
+      region:"Region", worldwide:"Weltweit",
+      placeholder:"Vogel eingeben…  (z. B. Amsel oder Turdus merula)",
+      solved:"Gelöst", outOf:"Keine Versuche mehr", gLeft:"Noch %n Versuche", gLeft1:"Noch 1 Versuch",
+      exact:"exakt", close:"nah dran", off:"daneben", arrows:"↑ Zielvogel ist größer \u00A0 ↓ kleiner",
+      share:"Ergebnis teilen", random:"Zufälligen Vogel spielen", randomPrefix:"Zufall",
+      nailed:"Erraten — ", was:"Der gesuchte Vogel war ", next:"Nächster Vogel in ",
+      notKnown:"Unbekannte Art", already:"Schon geraten", copied:"Ergebnis kopiert",
+      footer:"Jeder Tipp wird mit dem gesuchten Vogel verglichen: Taxonomie, Habitat, trophische Nische, Lebensweise, Zugverhalten und sechs morphometrische Maße. Basierend auf AVONET (Tobias et al. 2022).",
+      panelTitle:"Das Exemplar-Etikett lesen",
+      panelCat:"Die farbigen Felder (Ordnung, Familie, Habitat, Nische, Lebensweise, Zugverhalten) werden grün, wenn sie mit dem gesuchten Vogel übereinstimmen, sonst grau.",
+      panelArrow:"Bei den Maßen bedeutet ↑, dass der Wert des gesuchten Vogels größer ist als dein Tipp, ↓ kleiner. Grün = innerhalb 5 %, Bernstein = innerhalb 25 %.",
+      defsHead:"Was jedes Maß bedeutet" },
+    it:{ eyebrow:"Esemplare del giorno · AVONET", no:"N.",
+      tagPre:"Deduci l'uccello misterioso dalla sua tassonomia, ecologia e misure. Dati dal database ", tagPost:".",
+      region:"Regione", worldwide:"Mondiale",
+      placeholder:"Nomina un uccello…  (es. Merlo o Turdus merula)",
+      solved:"Risolto", outOf:"Tentativi esauriti", gLeft:"%n tentativi rimasti", gLeft1:"1 tentativo rimasto",
+      exact:"esatto", close:"vicino", off:"lontano", arrows:"↑ l'uccello misterioso è più grande \u00A0 ↓ più piccolo",
+      share:"Condividi risultato", random:"Gioca un uccello casuale", randomPrefix:"Casuale",
+      nailed:"Indovinato — ", was:"L'uccello misterioso era ", next:"Prossimo uccello tra ",
+      notKnown:"Specie sconosciuta", already:"Già indovinato", copied:"Risultato copiato",
+      footer:"Ogni tentativo è confrontato con l'uccello misterioso per tassonomia, habitat, nicchia trofica, stile di vita, migrazione e sei misure morfometriche. Basato su AVONET (Tobias et al. 2022).",
+      panelTitle:"Leggere l'etichetta dell'esemplare",
+      panelCat:"I riquadri colorati (Ordine, Famiglia, Habitat, Nicchia, Stile di vita, Migrazione) diventano verdi quando coincidono con l'uccello misterioso, grigi altrimenti.",
+      panelArrow:"Per le misure, ↑ indica che il valore dell'uccello misterioso è maggiore del tuo tentativo, ↓ minore. Verde = entro il 5%, ambra = entro il 25%.",
+      defsHead:"Cosa significa ogni misura" }
+  };
+  const TRAIT_L = {
+    en:{mass:"Mass",wing:"Wing",beak:"Beak",tarsus:"Tarsus",tail:"Tail",hwi:"Hand-wing"},
+    de:{mass:"Gewicht",wing:"Flügel",beak:"Schnabel",tarsus:"Lauf",tail:"Schwanz",hwi:"Handflügel"},
+    it:{mass:"Massa",wing:"Ala",beak:"Becco",tarsus:"Tarso",tail:"Coda",hwi:"Mano-ala"}
+  };
+  const UNIT_HWI = {en:"index",de:"Index",it:"indice"};
+  const CHIP_L = {
+    en:{order:"Order",family:"Family",habitat:"Habitat",niche:"Trophic niche",lifestyle:"Lifestyle",migration:"Migration"},
+    de:{order:"Ordnung",family:"Familie",habitat:"Habitat",niche:"Trophische Nische",lifestyle:"Lebensweise",migration:"Zugverhalten"},
+    it:{order:"Ordine",family:"Famiglia",habitat:"Habitat",niche:"Nicchia trofica",lifestyle:"Stile di vita",migration:"Migrazione"}
+  };
+  const DEFS = {
+    en:{wing:"Wing chord — the folded wing from the carpal joint to the tip of the longest primary. Not wingspan.",
+        mass:"Body mass, in grams.",
+        beak:"Beak length along the culmen, from the tip to the base of the skull.",
+        tarsus:"Tarsometatarsus — the lower leg / foot bone.",
+        tail:"From where the central tail feathers insert to the longest tip.",
+        hwi:"Hand-Wing Index = 100 × Kipp's distance ÷ wing length. Higher = longer, more pointed wings (stronger flyer)."},
+    de:{wing:"Flügellänge (Flügelbug) — vom Handgelenk bis zur Spitze der längsten Handschwinge. Nicht die Spannweite.",
+        mass:"Körpergewicht in Gramm.",
+        beak:"Schnabellänge entlang des Firsts, von der Spitze bis zum Schädel.",
+        tarsus:"Lauf (Tarsometatarsus) — der untere Beinknochen.",
+        tail:"Vom Ansatz der mittleren Steuerfedern bis zur längsten Spitze.",
+        hwi:"Handflügelindex = 100 × Kipp-Distanz ÷ Flügellänge. Höher = längere, spitzere Flügel (bessere Flieger)."},
+    it:{wing:"Corda alare — ala ripiegata dal polso alla punta della remigante primaria più lunga. Non l'apertura alare.",
+        mass:"Massa corporea, in grammi.",
+        beak:"Lunghezza del becco lungo il culmine, dalla punta alla base del cranio.",
+        tarsus:"Tarso-metatarso — l'osso della zampa.",
+        tail:"Dall'inserzione delle timoniere centrali alla punta più lunga.",
+        hwi:"Indice mano-ala = 100 × distanza di Kipp ÷ lunghezza alare. Più alto = ali più lunghe e appuntite (volatori migliori)."}
+  };
+  const CATV = {
+    habitat:{Forest:{de:"Wald",it:"Foresta"},Shrubland:{de:"Buschland",it:"Arbusteto"},Woodland:{de:"Gehölz",it:"Bosco rado"},
+      Grassland:{de:"Grasland",it:"Prateria"},Rock:{de:"Fels",it:"Roccia"},Wetland:{de:"Feuchtgebiet",it:"Zona umida"},
+      "Human Modified":{de:"Kulturland",it:"Ambiente antropico"},Coastal:{de:"Küste",it:"Costiero"},Marine:{de:"Meer",it:"Marino"},
+      Riverine:{de:"Fluss",it:"Fluviale"},Desert:{de:"Wüste",it:"Deserto"}},
+    migration:{Sedentary:{de:"Standvogel",it:"Sedentario"},Partial:{de:"Teilzieher",it:"Parziale"},Migratory:{de:"Zugvogel",it:"Migratore"}},
+    niche:{Vertivore:{de:"Wirbeltierfresser",it:"Vertivoro"},Invertivore:{de:"Wirbellosenfresser",it:"Invertivoro"},
+      Scavenger:{de:"Aasfresser",it:"Saprofago"},Omnivore:{de:"Allesfresser",it:"Onnivoro"},
+      "Aquatic predator":{de:"Wasserjäger",it:"Predatore acquatico"},Frugivore:{de:"Fruchtfresser",it:"Frugivoro"},
+      "Herbivore aquatic":{de:"Pflanzenfresser (Wasser)",it:"Erbivoro acquatico"},
+      "Herbivore terrestrial":{de:"Pflanzenfresser (Land)",it:"Erbivoro terrestre"},
+      Nectarivore:{de:"Nektarfresser",it:"Nettarivoro"},Granivore:{de:"Körnerfresser",it:"Granivoro"}},
+    lifestyle:{Insessorial:{de:"Baumbewohnend",it:"Arboricolo"},Generalist:{de:"Generalist",it:"Generalista"},
+      Aerial:{de:"Luftlebend",it:"Aereo"},Terrestrial:{de:"Bodenbewohnend",it:"Terricolo"},Aquatic:{de:"Wasserlebend",it:"Acquatico"}}
+  };
+  const REGION_L = {
+    "Worldwide":{de:"Weltweit",it:"Mondiale"},
+    "North America":{de:"Nordamerika",it:"Nord America"},
+    "Central America & Caribbean":{de:"Mittelamerika & Karibik",it:"America Centrale e Caraibi"},
+    "South America":{de:"Südamerika",it:"Sud America"},
+    "Europe & W. Palearctic":{de:"Europa & westl. Paläarktis",it:"Europa e Paleartico occ."},
+    "Africa":{de:"Afrika",it:"Africa"}, "Asia":{de:"Asien",it:"Asia"},
+    "Australasia & Oceania":{de:"Australasien & Ozeanien",it:"Australasia e Oceania"}
+  };
+
+  let LANG="en";
+  try{ const l=localStorage.getItem("birdle-lang"); if(l && UI[l]) LANG=l; }catch(e){}
+  let L = UI[LANG];
+  function nameFor(b){ const loc = LANG==="de"?b.de : LANG==="it"?b.it : null; return loc || b.common || b.name; }
+  function catVal(kind,val){ if(val==null) return null; if(LANG==="en") return val; const m=CATV[kind]; return (m&&m[val]&&m[val][LANG])||val; }
+  function regionName(){ const en = region<0?"Worldwide":REGIONS[region]; return (LANG!=="en"&&REGION_L[en]&&REGION_L[en][LANG])||en; }
 
   // ---- regions ----
-  const REGIONS = D.regions || [];
-  let region = -1;                        // -1 = Worldwide
+  let region = -1;
   try{ const rr=localStorage.getItem("birdle-region"); if(rr!==null) region=parseInt(rr,10); }catch(e){}
   if(isNaN(region)||region<-1||region>=REGIONS.length) region=-1;
-  function regionName(){ return region<0 ? "Worldwide" : REGIONS[region]; }
-  function currentPool(){
-    if(region<0) return birds.filter(b=>b.pool);
-    const bit = 1<<region;
-    return birds.filter(b=> (b.reg & bit)!==0 );
-  }
-  // ---- deterministic daily target (per region) ----
+  function currentPool(){ if(region<0) return birds.filter(b=>b.pool); const bit=1<<region; return birds.filter(b=>(b.reg&bit)!==0); }
+
   const EPOCH = Date.UTC(2024,0,1);
   function dayIndex(d){ return Math.floor((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())-EPOCH)/864e5); }
   function mulberry(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
-
   let POOL=[], ORDER=[];
   function buildPool(){
-    POOL = currentPool();
-    ORDER = POOL.map((_,i)=>i);
-    const seed = 99173 + (region+1)*7919;      // distinct shuffle per region
-    const rnd = mulberry(seed);
+    POOL=currentPool(); ORDER=POOL.map((_,i)=>i);
+    const rnd=mulberry(99173+(region+1)*7919);
     for(let i=ORDER.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[ORDER[i],ORDER[j]]=[ORDER[j],ORDER[i]];}
   }
   buildPool();
-
-  const today = new Date();
-  const DNUM = dayIndex(today);
-  let RANDOM = false, RSEED = 0;
-  function targetFor(){
-    if(!POOL.length) return birds[0];
-    if(RANDOM){ return POOL[Math.floor(mulberry(RSEED)()*POOL.length)]; }
-    return POOL[ ORDER[ ((DNUM % ORDER.length)+ORDER.length)%ORDER.length ] ];
-  }
-  let TARGET = targetFor();
+  const today=new Date(); const DNUM=dayIndex(today);
+  let RANDOM=false, RSEED=0;
+  function targetFor(){ if(!POOL.length) return birds[0];
+    if(RANDOM) return POOL[Math.floor(mulberry(RSEED)()*POOL.length)];
+    return POOL[ORDER[((DNUM%ORDER.length)+ORDER.length)%ORDER.length]]; }
+  let TARGET=targetFor();
 
   const MAX=8;
-  const TRAITS=[
-    {k:"mass",label:"Mass",unit:"g"},
-    {k:"wing",label:"Wing",unit:"mm"},
-    {k:"beak",label:"Beak",unit:"mm"},
-    {k:"tarsus",label:"Tarsus",unit:"mm"},
-    {k:"tail",label:"Tail",unit:"mm"},
-    {k:"hwi",label:"Hand-wing",unit:""},
-  ];
-  const CATCHIPS=[
-    {k:"order",label:"Order"},
-    {k:"family",label:"Family"},
-    {k:"habitat",label:"Habitat"},
-    {k:"niche",label:"Trophic niche"},
-    {k:"lifestyle",label:"Lifestyle"},
-    {k:"migration",label:"Migration"},
-  ];
+  const TRAITS=[{k:"mass",unit:"g"},{k:"wing",unit:"mm"},{k:"beak",unit:"mm"},{k:"tarsus",unit:"mm"},{k:"tail",unit:"mm"},{k:"hwi",unit:""}];
+  const CATCHIPS=["order","family","habitat","niche","lifestyle","migration"];
 
-  // ---- state / persistence (scoped per region + day) ----
   function storeKey(){ return "birdle-v1:"+region+":"+DNUM; }
-  function loadState(){
-    try{const s=JSON.parse(localStorage.getItem(storeKey())||"{}");
-      if(!RANDOM && s.day===DNUM) return s;}catch(e){}
-    return {day:DNUM,guesses:[],done:false,won:false};
-  }
+  function loadState(){ try{const s=JSON.parse(localStorage.getItem(storeKey())||"{}"); if(!RANDOM&&s.day===DNUM) return s;}catch(e){} return {day:DNUM,guesses:[],done:false,won:false}; }
   function saveState(){ if(RANDOM) return; localStorage.setItem(storeKey(),JSON.stringify(state)); }
-  let state = loadState();
+  let state=loadState();
 
-  // ---- DOM ----
   const $=s=>document.querySelector(s);
   const input=$("#guess"), ac=$("#ac"), board=$("#board"), banner=$("#banner");
-  const regionSel=$("#region");
-  // build region options
-  regionSel.innerHTML = `<option value="-1">🌍 Worldwide</option>` +
-    REGIONS.map((n,i)=>`<option value="${i}">${n}</option>`).join("");
-  regionSel.value = String(region);
-  $("#puzzleNo").textContent = RANDOM?"∞":(DNUM);
+  const regionSel=$("#region"), panel=$("#panel"), helpToggle=$("#helpToggle");
   $("#puzzleDate").textContent = today.toLocaleDateString(undefined,{year:"numeric",month:"short",day:"numeric"});
-  $("#mode").textContent = regionName();
 
-  function cmpNum(a,b){
-    if(a==null||b==null) return {cls:"t-miss",arw:""};
-    const diff=Math.abs(a-b), rel=diff/Math.max(Math.abs(b),1e-6);
-    let cls = rel<=0.05?"t-match": rel<=0.25?"t-near":"t-miss";
-    let arw = a===b?"": (b>a?"↑":"↓");   // arrow points toward the TARGET value
-    if(cls==="t-match") arw="✓";
-    return {cls,arw};
-  }
-  function catCls(gv,tv){ return (gv!=null&&gv===tv)?"m-match":"m-miss"; }
-
+  function cmpNum(a,b){ if(a==null||b==null) return {cls:"t-miss",arw:""};
+    const rel=Math.abs(a-b)/Math.max(Math.abs(b),1e-6);
+    let cls=rel<=0.05?"t-match":rel<=0.25?"t-near":"t-miss";
+    let arw=a===b?"":(b>a?"↑":"↓"); if(cls==="t-match")arw="✓"; return {cls,arw}; }
   function fmt(v){ if(v==null) return "—"; return v>=100?Math.round(v):v; }
 
   function renderGuess(name){
-    const g = byName[name.toLowerCase()];
-    const win = g.name===TARGET.name;
-    const el=document.createElement("div");
-    el.className="specimen"+(win?" win":"");
+    const g=byName[name.toLowerCase()]; const el=document.createElement("div");
+    el.className="specimen"+(g.name===TARGET.name?" win":"");
     let chips="";
-    CATCHIPS.forEach(c=>{
-      const cls=catCls(g[c.k],TARGET[c.k]);
-      chips+=`<div class="chip ${cls}"><span class="k">${c.label}</span><span class="v">${g[c.k]??"—"}</span></div>`;
+    CATCHIPS.forEach(k=>{
+      const same = g[k]!=null && g[k]===TARGET[k];
+      const disp = (k==="order"||k==="family") ? (g[k]??"—") : (catVal(k,g[k])??"—");
+      chips+=`<div class="chip ${same?"m-match":"m-miss"}"><span class="k">${CHIP_L[LANG][k]}</span><span class="v">${disp}</span></div>`;
     });
     let traits="";
     TRAITS.forEach(t=>{
       const r=cmpNum(g[t.k],TARGET[t.k]);
-      traits+=`<div class="trait ${r.cls}"><div class="tk">${t.label}</div>
-        <div class="tv">${fmt(g[t.k])}<span class="arw">${r.arw}</span></div>
-        <div class="unit">${t.unit||"index"}</div></div>`;
+      const unit = t.k==="hwi"?UNIT_HWI[LANG]:t.unit;
+      traits+=`<div class="trait ${r.cls}"><div class="tk">${TRAIT_L[LANG][t.k]}</div>
+        <div class="tv">${fmt(g[t.k])}<span class="arw">${r.arw}</span></div><div class="unit">${unit}</div></div>`;
     });
-    const nameHtml = g.common
-      ? `<span class="spec-name">${g.common}</span><span class="spec-sci">${g.name}</span>`
+    const disp=nameFor(g);
+    const nameHtml = (disp!==g.name)
+      ? `<span class="spec-name">${disp}</span><span class="spec-sci">${g.name}</span>`
       : `<span class="spec-name sci-only">${g.name}</span>`;
-    el.innerHTML=`
-      <div class="spec-head">
-        <div class="spec-title">${nameHtml}</div>
-        <span class="spec-no">${g.family}</span>
-      </div>
-      <div class="chips">${chips}</div>
-      <div class="traits">${traits}</div>`;
+    el.innerHTML=`<div class="spec-head"><div class="spec-title">${nameHtml}</div><span class="spec-no">${g.family}</span></div>
+      <div class="chips">${chips}</div><div class="traits">${traits}</div>`;
     board.prepend(el);
   }
 
   function shareGrid(){
     let lines=[];
     state.guesses.forEach(name=>{
-      const g=byName[name.toLowerCase()];
-      let s="";
-      CATCHIPS.forEach(c=>{ s+= (g[c.k]!=null&&g[c.k]===TARGET[c.k])?"🟩":"⬛"; });
+      const g=byName[name.toLowerCase()]; let s="";
+      CATCHIPS.forEach(k=>{ s+=(g[k]!=null&&g[k]===TARGET[k])?"🟩":"⬛"; });
       s+=" ";
-      TRAITS.forEach(t=>{
-        const r=cmpNum(g[t.k],TARGET[t.k]);
-        s+= r.cls==="t-match"?"🟩": r.cls==="t-near"?"🟨":"⬛";
-      });
+      TRAITS.forEach(t=>{ const r=cmpNum(g[t.k],TARGET[t.k]); s+=r.cls==="t-match"?"🟩":r.cls==="t-near"?"🟨":"⬛"; });
       lines.push(s);
     });
-    const head=`Birdle · ${regionName()} · No.${RANDOM?"∞":DNUM} — ${state.won?state.guesses.length:"X"}/${MAX}`;
-    return head+"\n"+lines.join("\n");
+    return `Birdle · ${regionName()} · ${L.no}${RANDOM?"∞":DNUM} — ${state.won?state.guesses.length:"X"}/${MAX}\n`+lines.join("\n");
   }
 
   function updateRemaining(){
     const left=MAX-state.guesses.length;
-    $("#remaining").textContent = state.done? (state.won?"Solved":"Out of guesses")
-      : left+" guess"+(left===1?"":"es")+" left";
+    $("#remaining").textContent = state.done ? (state.won?L.solved:L.outOf)
+      : (left===1?L.gLeft1:L.gLeft.replace("%n",left));
+    $("#mode").textContent = RANDOM ? L.randomPrefix+" · "+regionName() : regionName();
+    $("#puzzleNo").textContent = RANDOM?"∞":DNUM;
   }
 
   function finish(){
-    state.done=true; input.disabled=true; ac.classList.remove("open");
-    banner.classList.add("show");
-    const t=TARGET;
-    const rev = t.common ? `${t.common} <span class="sci">(${t.name})</span>` : `<span class="sci">${t.name}</span>`;
+    state.done=true; input.disabled=true; ac.classList.remove("open"); banner.classList.add("show");
+    const t=TARGET, disp=nameFor(t);
+    const rev = (disp!==t.name)? `${disp} <span class="sci">(${t.name})</span>` : `<span class="sci">${t.name}</span>`;
     banner.innerHTML=`
-      <h2>${state.won?"Nailed it — ":"The mystery bird was "}${rev}</h2>
-      <p>${t.family} · ${t.order} · ${t.habitat||"—"} · ${t.niche||"—"} · ${t.mass!=null?t.mass+" g":""}</p>
+      <h2>${state.won?L.nailed:L.was}${rev}</h2>
+      <p>${t.family} · ${t.order} · ${catVal("habitat",t.habitat)||"—"} · ${catVal("niche",t.niche)||"—"} · ${t.mass!=null?t.mass+" g":""}</p>
       <div class="row">
-        <button class="act" id="shareBtn">Share result</button>
-        <button class="act ghost" id="randBtn">Play a random bird</button>
+        <button class="act" id="shareBtn">${L.share}</button>
+        <button class="act ghost" id="randBtn">${L.random}</button>
         <span class="countdown" id="cd"></span>
       </div>`;
-    $("#shareBtn").onclick=()=>{
-      const txt=shareGrid();
-      (navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject())
-        .then(()=>toast("Result copied to clipboard"))
-        .catch(()=>toast(txt));
-    };
+    $("#shareBtn").onclick=()=>{ const txt=shareGrid();
+      (navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>toast(L.copied)).catch(()=>toast(txt)); };
     $("#randBtn").onclick=startRandom;
-    tickCountdown();
-    saveState();
+    tickCountdown(); saveState();
   }
 
   function submit(name){
     const g=byName[(name||"").toLowerCase()];
-    if(!g){ toast("Not a known species"); return; }
-    if(state.guesses.includes(g.name)){ toast("Already guessed"); return; }
-    state.guesses.push(g.name);
-    renderGuess(g.name);
+    if(!g){ toast(L.notKnown); return; }
+    if(state.guesses.includes(g.name)){ toast(L.already); return; }
+    state.guesses.push(g.name); renderGuess(g.name);
     input.value=""; ac.classList.remove("open"); acItems=[];
-    if(g.name===TARGET.name){ state.won=true; }
+    if(g.name===TARGET.name) state.won=true;
     updateRemaining();
-    if(state.won || state.guesses.length>=MAX){ finish(); } else { saveState(); }
+    if(state.won||state.guesses.length>=MAX) finish(); else saveState();
   }
 
   // ---- autocomplete ----
@@ -419,17 +426,17 @@
     if(q.length<2){ ac.classList.remove("open"); return; }
     const starts=[], contains=[];
     for(const b of birds){
-      const sci=b.name.toLowerCase(), com=(b.common||"").toLowerCase();
-      if(sci.startsWith(q)||com.startsWith(q)) starts.push(b);
-      else if(sci.includes(q)||com.includes(q)) contains.push(b);
+      const cand=[b.name,b.common,b.de,b.it].filter(Boolean).map(s=>s.toLowerCase());
+      if(cand.some(s=>s.startsWith(q))) starts.push(b);
+      else if(cand.some(s=>s.includes(q))) contains.push(b);
       if(starts.length>=12) break;
     }
-    acItems=starts.concat(contains).slice(0,8);
-    acActive=-1;
+    acItems=starts.concat(contains).slice(0,8); acActive=-1;
     if(!acItems.length){ ac.classList.remove("open"); return; }
     ac.innerHTML=acItems.map((b,i)=>{
-      const main = b.common ? b.common : `<span class="sci">${b.name}</span>`;
-      const sub  = b.common ? `<span class="fam"><i>${b.name}</i> · ${b.family}</span>` : `<span class="fam">${b.family}</span>`;
+      const disp=nameFor(b); const isSci=disp===b.name;
+      const main=isSci?`<span class="sci">${b.name}</span>`:disp;
+      const sub =isSci?`<span class="fam">${b.family}</span>`:`<span class="fam"><i>${b.name}</i> · ${b.family}</span>`;
       return `<div class="ac-item" data-i="${i}"><span>${main}</span>${sub}</div>`;
     }).join("");
     ac.classList.add("open");
@@ -445,58 +452,82 @@
   function paintAc(){[...ac.children].forEach((c,i)=>c.classList.toggle("active",i===acActive));}
   document.addEventListener("click",e=>{ if(!e.target.closest(".search")) ac.classList.remove("open"); });
 
-  // ---- random / replay ----
   function startRandom(){
-    RANDOM=true; RSEED=(Date.now()^(Math.random()*1e9))|0;
-    TARGET=targetFor();
+    RANDOM=true; RSEED=(Date.now()^(Math.random()*1e9))|0; TARGET=targetFor();
     state={day:-1,guesses:[],done:false,won:false};
     board.innerHTML=""; banner.classList.remove("show"); banner.innerHTML="";
-    input.disabled=false; input.value=""; input.focus();
-    $("#mode").textContent="Random"; $("#puzzleNo").textContent="∞";
-    updateRemaining();
+    input.disabled=false; input.value=""; input.focus(); updateRemaining();
   }
 
   function tickCountdown(){
     const cd=$("#cd"); if(!cd) return;
-    function upd(){
-      if(RANDOM){cd.textContent="";return;}
-      const now=new Date();
-      const next=new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),now.getUTCDate()+1));
+    function upd(){ if(RANDOM){cd.textContent="";return;}
+      const now=new Date(); const next=new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),now.getUTCDate()+1));
       let s=Math.max(0,Math.floor((next-now)/1000));
       const h=String(Math.floor(s/3600)).padStart(2,"0");s%=3600;
       const m=String(Math.floor(s/60)).padStart(2,"0");const ss=String(s%60).padStart(2,"0");
-      cd.textContent="Next bird in "+h+":"+m+":"+ss;
-    }
+      cd.textContent=L.next+h+":"+m+":"+ss; }
     upd(); clearInterval(window.__cd); window.__cd=setInterval(upd,1000);
   }
 
   let toastT;
   function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("show"),2200);}
 
-  // ---- region switching ----
+  // ---- chrome / language ----
+  function rebuildRegionOptions(){
+    const cur=String(region);
+    regionSel.innerHTML=`<option value="-1">🌍 ${L.worldwide}</option>`+
+      REGIONS.map((n,i)=>`<option value="${i}">${(LANG!=="en"&&REGION_L[n]&&REGION_L[n][LANG])||n}</option>`).join("");
+    regionSel.value=cur;
+  }
+  function applyChrome(){
+    document.documentElement.lang=LANG;
+    $("#eyebrow").textContent=L.eyebrow;
+    $("#noLabel").textContent=L.no;
+    $("#regionLabel").textContent=L.region;
+    $(".tagline").innerHTML=L.tagPre+`<a href="https://opentraits.org/datasets/avonet" target="_blank" rel="noopener">AVONET</a>`+L.tagPost;
+    input.placeholder=L.placeholder;
+    $("#legend").innerHTML=`
+      <span><i class="sw" style="background:var(--match)"></i>${L.exact}</span>
+      <span><i class="sw" style="background:var(--near)"></i>${L.close}</span>
+      <span><i class="sw" style="background:var(--miss)"></i>${L.off}</span>
+      <span>${L.arrows}</span>`;
+    $("#footer").textContent=L.footer;
+    $("#panelTitle").textContent=L.panelTitle;
+    $("#panelCat").textContent=L.panelCat;
+    $("#panelArrow").textContent=L.panelArrow;
+    $("#defsHead").textContent=L.defsHead;
+    $("#defs").innerHTML=["wing","mass","beak","tarsus","tail","hwi"].map(k=>
+      `<div class="def"><b>${TRAIT_L[LANG][k]}</b>${DEFS[LANG][k]}</div>`).join("");
+    [...document.querySelectorAll("#langsw button")].forEach(b=>b.classList.toggle("active",b.dataset.lang===LANG));
+    rebuildRegionOptions();
+    updateRemaining();
+  }
+  function setLang(l){
+    if(!UI[l]) return; LANG=l; L=UI[l];
+    try{ localStorage.setItem("birdle-lang",l); }catch(e){}
+    applyChrome();
+    board.innerHTML=""; state.guesses.forEach(renderGuess);
+    if(state.done) finish();
+  }
+  [...document.querySelectorAll("#langsw button")].forEach(b=>b.onclick=()=>setLang(b.dataset.lang));
+  helpToggle.onclick=()=>{ const open=panel.hasAttribute("hidden"); if(open){panel.removeAttribute("hidden");helpToggle.classList.add("active");} else {panel.setAttribute("hidden","");helpToggle.classList.remove("active");} };
+
   regionSel.addEventListener("change",()=>{
-    region = parseInt(regionSel.value,10);
-    if(isNaN(region)) region=-1;
-    try{ localStorage.setItem("birdle-region", String(region)); }catch(e){}
-    RANDOM=false; RSEED=0;
-    $("#puzzleNo").textContent = DNUM;
-    buildPool();
-    TARGET = targetFor();
-    state = loadState();
-    initPuzzle();
+    region=parseInt(regionSel.value,10); if(isNaN(region)) region=-1;
+    try{ localStorage.setItem("birdle-region",String(region)); }catch(e){}
+    RANDOM=false; RSEED=0; buildPool(); TARGET=targetFor(); state=loadState(); initPuzzle();
   });
 
   function initPuzzle(){
     board.innerHTML=""; banner.classList.remove("show"); banner.innerHTML="";
     input.disabled=false; input.value=""; ac.classList.remove("open"); acItems=[];
-    $("#mode").textContent = RANDOM ? "Random · "+regionName() : regionName();
     clearInterval(window.__cd);
-    state.guesses.forEach(n=>renderGuess(n));
-    updateRemaining();
+    state.guesses.forEach(renderGuess); updateRemaining();
     if(state.done) finish(); else input.focus();
   }
 
-  // ---- initial render ----
+  applyChrome();
   initPuzzle();
 })();
 </script>
